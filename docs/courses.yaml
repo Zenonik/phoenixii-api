@@ -1,0 +1,877 @@
+openapi: 3.0.0
+info:
+  description: This is a simple description for the PhoenixII Courses-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the
+    API. These parameter will be given with API key.
+  version: 1.3.4
+  title: Courses API
+  contact:
+    email: phoenix-api@it4sport.de
+tags:
+  - name: courses
+    description: act with the courses API.
+paths:
+  /courses/full:
+    get:
+      tags:
+        - courses
+      summary: show all courses for a client with the full attribute list
+      description: "With this API call you will get all courses belong to your client."
+      operationId: showCourses
+      parameters:
+        - name: limit
+          in: query
+          description: "Use to limit the amount of courses. Default: 25 | Max: 1000"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: "The page offset in pagination"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: include
+          in: query
+          description: "Comma seperated list of additional relations that should be fetched. Allowed: participant, courseStatus, courseLeader, courseSpeakers, downloads, costs, county, subcounty, mandant"
+          required: false
+          schema:
+            type: string
+        - name: updated
+          in: query
+          description: "Use to limit the results of courses by their last changed date. Default: none"
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseApiResponse"
+      security:
+        - api_key: []
+    post:
+      tags:
+        - courses
+      summary: creatre a new Course
+      description: "With this API call you can store a new course."
+      operationId: postCourse
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseStore'
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseApiResponse"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/full/{Course}:
+    put:
+      tags:
+        - courses
+      summary: update the data of a Course
+      description: "With this API call you can update a course."
+      operationId: updateCourse
+      parameters:
+        - in: path
+          name: Course
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The Course unique identifier
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseUpdate'
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseApiResponse"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/course-leaders:
+    get:
+      tags:
+        - CourseLeader
+      summary: get a list of all CourseLeader
+      description: "With this API call you can get a list of all CourseLeader."
+      operationId: indexCourseLeader
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CourseLeader"
+    post:
+      tags:
+        - CourseLeader
+      summary: create a new CourseLeader
+      description: "With this API call you can store a new CourseLeader."
+      operationId: storeCourseLeader
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseLeader'
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseLeader"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/course-leaders/{CourseLeader}:
+    put:
+      tags:
+        - CourseLeader
+      summary: update the data of a CourseLeader
+      description: "With this API call you can update a CourseLeader."
+      operationId: updateCourseLeader
+      parameters:
+        - in: path
+          name: CourseLeader
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The CourseLeader unique identifier
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseLeader"
+        "404":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /courses/course-locations:
+    get:
+      tags:
+        - CourseLocation
+      summary: get a list of all CourseLocation
+      description: "With this API call you can get a list of all CourseLocation."
+      operationId: indexCourseLocation
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CourseLocation"
+    post:
+      tags:
+        - CourseLocation
+      summary: create a new CourseLocation
+      description: "With this API call you can store a new CourseLocation."
+      operationId: storeCourseLocation
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseLocation'
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseLocation"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/course-locations/{CourseLocation}:
+    put:
+      tags:
+        - CourseLocation
+      summary: update the data of a CourseLocation
+      description: "With this API call you can update a CourseLocation."
+      operationId: updateCourseLocation
+      parameters:
+        - in: path
+          name: CourseLocation
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The CourseLocation unique identifier
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseLocation"
+        "404":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/course-speakers:
+    get:
+      tags:
+        - CourseSpeaker
+      summary: get a list of all CourseSpeaker
+      description: "With this API call you can get a list of all CourseSpeaker."
+      operationId: indexCourseSpeaker
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CourseSpeaker"
+    post:
+      tags:
+        - CourseSpeaker
+      summary: create a new CourseSpeaker
+      description: "With this API call you can store a new CourseSpeaker."
+      operationId: storeCourseSpeaker
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseSpeaker'
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseSpeaker"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+  /courses/course-speakers/{CourseSpeaker}:
+    put:
+      tags:
+        - CourseSpeaker
+      summary: update the data of a CourseSpeaker
+      description: "With this API call you can update a CourseSpeaker."
+      operationId: updateCourseSpeaker
+      parameters:
+        - in: path
+          name: CourseSpeaker
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The CourseSpeaker unique identifier
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseSpeaker"
+        "404":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - api_key: []
+servers:
+  - url: 'https://{env}api.it4sport.de/{client}/api/'
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+      client:
+        description: This is the client you will call the API
+        default: "webinar"
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header
+  schemas:
+    CourseModel:
+      type: object
+      properties:
+        uID:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The courses unique identifier"
+        SemNr:
+          type: integer
+          format: int32
+          example: 4711
+        updated_at:
+          type: string
+          format: "date-time"
+          example: "2019-12-24T00:00:00+01:00"
+      allOf:
+        - $ref: '#/components/schemas/CourseBase'
+        - $ref: '#/components/schemas/CourseRelations'
+    CourseStore:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CourseUpdate'
+      required:
+        - SeminarNr
+        - SeminarBeschreibung
+        - SeminarStart
+        - SeminarEnde
+        - county
+    CourseUpdate:
+      type: object
+      properties:
+        county:
+          type: string
+          description: "The unique id of the county | Or the number as integer"
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        subcounty:
+          type: string
+          description: "The unique id of the subcounty | Or the number as integer"
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+      allOf:
+        - $ref: '#/components/schemas/CourseBase'
+    CourseBase:
+      type: object
+      properties:
+        VeranstaltungsNr:
+          type: integer
+          format: int32
+          example: 1
+        SeminarteilNr:
+          type: integer
+          format: int32
+          example: 0
+        RechnungsTypNr:
+          type: integer
+          format: int32
+          example: 2
+        SeminarNr:
+          type: string
+          example: "Seminar 4711"
+        SeminarBeschreibung:
+          type: string
+          example: "Dieses Seminar dient als Platzhalter"
+        SeminarbeschreibungDetail2:
+          type: string
+          example: null
+        Leistungen:
+          type: string
+          example: "inkl. Übernachtung und Verpflegung"
+        SeminarOrtNr:
+          type: integer
+          format: int32
+          example: 202
+        SeminarArtNr:
+          type: integer
+          format: int32
+          example: 101
+        SeminarStart:
+          type: string
+          format: "date-time"
+          example: "2020-01-01T12:30:00+01:00"
+        SeminarEnde:
+          type: string
+          format: "date-time"
+          example: "2020-01-02T16:00:00+01:00"
+        AdrNrSB:
+          type: integer
+          format: int32
+          example: 101
+        Anmeldeschluss:
+          type: string
+          format: "date-time"
+          example: "2019-12-24T00:00:00+01:00"
+        SeminarMaxTN:
+          type: integer
+          format: int32
+          example: 25
+        SeminarMinTN:
+          type: integer
+          format: int32
+          example: 0
+        AdrNr:
+          type: integer
+          format: int32
+          example: 4711
+        OnlineArtNr:
+          type: integer
+          format: int32
+          example: 3
+        SeminarinternetstatusNr:
+          type: integer
+          format: int32
+          example: 1
+        DisziplinNr:
+          type: integer
+          format: int32
+          example: 4711
+        LizenzbereichsNr:
+          type: integer
+          format: int32
+          example: 1
+        MitVereinsfreigabe:
+          type: boolean
+          example: true
+        SeminarstatusNr:
+          type: integer
+          format: int32
+          example: 1
+        Mindestalter:
+          type: integer
+          format: int32
+          example: 16
+        MindestalterLgBeginn:
+          type: boolean
+          example: true
+        VereinTnPruefungsNr:
+          type: integer
+          format: int32
+          example: 2
+        VeranstaltungsArtNr:
+          type: integer
+          format: int32
+          example: 1
+        uSeminarElter:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        SemNrVA:
+          type: integer
+          format: int32
+          example: 0
+        ArtikelNr:
+          type: integer
+          format: int32
+          example: 4711
+        SemNrFremd:
+          type: integer
+          format: int32
+          example: 0
+        SemNrFremdVL:
+          type: integer
+          format: int32
+          example: 0
+    CourseRelations:
+      type: object
+      required:
+        - SeminarNr
+        - SeminarBeschreibung
+        - SeminarStart
+        - SeminarEnde
+      properties:
+        county:
+          $ref: "#/components/schemas/County"
+        sub_county:
+          $ref: "#/components/schemas/County"
+        mandant:
+          $ref: "#/components/schemas/Mandant"
+        course_status:
+          $ref: "#/components/schemas/CourseStatus"
+        course_leader:
+          $ref: "#/components/schemas/CourseLeader"
+        course_location:
+          $ref: "#/components/schemas/CourseLocation"
+        course_speakers:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseSpeaker"
+        downloads:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseDownloads"
+        costs:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseCosts"
+    County:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the county"
+        level:
+          type: integer
+          format: int32
+          example: 21
+          description: "The county level (21 for county, 22 for subcounty / Bezirk&Kreis)"
+        number:
+          type: integer
+          format: int32
+          example: 7
+          description: "The internal county sort index"
+        name:
+          type: string
+          example: "Nord"
+          description: "The name of the county"
+        short_name:
+          type: string
+          example: "Nord"
+          description: "The short name of the county"
+        alternative_name:
+          type: string
+          example: "Nord"
+          description: "The alternative name of the county"
+        abbreviation:
+          type: string
+          example: "NO"
+          description: "The abbreviation of the county"
+    CourseStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the course status"
+        description:
+          type: string
+          example: "abgeschlossen"
+          description: "The description of the course status"
+        status_number:
+          type: integer
+          format: int32
+          example: 7
+        sort:
+          type: integer
+          format: int32
+          example: 1
+    CourseLeader:
+      type: object
+      required:
+        - firstname
+        - lastname
+        - sex
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the person"
+        firstname:
+          type: string
+          format: uuid
+          example: "Kim"
+          description: "The firstname of the person"
+        lastname:
+          type: string
+          format: uuid
+          example: "Mustermann"
+          description: "The unique id of the person"
+        mail:
+          type: string
+          example: "rundsport@musterhalle.de"
+        city:
+          type: string
+          example: "Musterhausen"
+        postal:
+          type: string
+          example: "71209"
+        street:
+          type: string
+          example: "Musterweg 12"
+        sex:
+          type: integer
+          example: 5
+          description: "male (1), female (2), non binary (5)"
+          enum:
+            - 1
+            - 2
+            - 5
+        is_active:
+          type: boolean
+          example: true
+        comment:
+          type: string
+    CourseLocation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the location"
+        number:
+          type: integer
+        name:
+          type: string
+          example: "Rundsporthalle"
+          description: "The short name of the location"
+        long_name:
+          type: string
+          example: "Rundsporthalle Musterhausen"
+          description: "The full name of the location"
+        city:
+          type: string
+          example: "Musterhausen"
+        postal:
+          type: string
+          example: "71209"
+        street:
+          type: string
+          example: "Musterweg 12"
+        phone:
+          type: string
+          example: "0174 121 121 21"
+        mail:
+          type: string
+          example: "rundsport@musterhalle.de"
+        longitude:
+          type: number
+          format: float
+          example: 9.172345
+        latitude:
+          type: number
+          format: float
+          example: 9.172345
+        available:
+          type: boolean
+          example: true
+        updated_at:
+          type: string
+          format: "date-time"
+          example: "2019-12-24T00:00:00+01:00"
+    CourseSpeaker:
+      type: object
+      required:
+        - firstname
+        - lastname
+        - sex
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        firstname:
+          type: string
+          format: uuid
+          example: "Kim"
+          description: "The firstname of the person"
+        lastname:
+          type: string
+          format: uuid
+          example: "Mustermann"
+          description: "The unique id of the person"
+        mail:
+          type: string
+          example: "rundsport@musterhalle.de"
+        city:
+          type: string
+          example: "Musterhausen"
+        postal:
+          type: string
+          example: "71209"
+        street:
+          type: string
+          example: "Musterweg 12"
+        sex:
+          type: integer
+          example: 5
+          enum:
+            - 1
+            - 2
+            - 5
+        birthdate:
+          type: string
+          format: "date"
+          example: "2019-12-24"
+        courses:
+          type: array
+          items:
+            type: string
+            example: "Mentale Stärke - Fit auf den Punkt"
+    CourseDownloads:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        name:
+          type: string
+          example: "Datenschutz-und-Informationen.pdf"
+        description:
+          type: string
+          example: "Datenschutzerklärung und Informationen zum Seminar"
+        path:
+          type: string
+          example: "/path/to/file.pdf"
+    CourseCosts:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        description:
+          type: string
+          example: "Kosten für Mitglieder des Verbands"
+        costs:
+          type: integer
+          example: 26.99
+        cost_type:
+          type: integer
+          example: 1
+          description: "The type of this costs (Normalpreis, Sonderpreis, ...)"
+        member_id:
+          type: integer
+          example: 1
+          description: "The id of the clubs membership"
+        show_online:
+          type: boolean
+          example: true
+          description: "Display in online registration"
+        cost_none_members:
+          type: boolean
+          example: false
+          description: "This cost is for non-members only"
+        updated_at:
+          type: string
+          format: "date-time"
+          example: "2019-12-24T00:00:00+01:00"
+    Mandant:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 15
+          description: "The unique id of the mandant/client"
+        name:
+          type: string
+          example: "Württembergischer Boxverband"
+          description: "The name of the client"
+        short_name:
+          type: string
+          example: "Nord"
+          description: "The short name of the client"
+        sports_type:
+          type: string
+          example: "bo"
+          description: "The sportstype of the client"
+    Meta:
+      type: object
+      properties:
+        results:
+          type: integer
+        dev:
+          type: object
+    CourseApiResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseModel"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          example: "The given data was invalid."
+          type: string
+        errors:
+          type: object
+          description: "A list of all errors produced. Example for some fields:"
+          properties:
+            SeminarNr:
+              type: array
+              items:
+                type: string
+                example: "The SeminarNr field is required."
+            SeminarStart:
+              type: array
+              items:
+                type: string
+                example: "The SeminarStart is not a valid date"

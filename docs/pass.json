@@ -1,0 +1,205 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple description for invoices via API in Phoenix II. In the URL is the parameter {client} needed, this will call the right client for the api. This parameter will be given with API key.",
+    "version": "1.1.0",
+    "title": "Pass API",
+    "contact": {
+      "email": "phoenix-api@it4sport.de"
+    }
+  },
+  "host": "api.it4sport.de/{client}",
+  "basePath": "/api/pass",
+  "tags": [
+    {
+      "name": "transfers"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/transfers": {
+      "get": {
+        "tags": [
+          "transfers"
+        ],
+        "summary": "shows all transfares within a LV",
+        "description": "",
+        "operationId": "transfers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-Auth-Token",
+            "in": "header",
+            "description": "",
+            "format": "uuid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "pattern": "^(\\D{2,2})$",
+            "description": "Example: WÜ",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "TRANSFER",
+              "NEW",
+              "DELETE"
+            ],
+            "description": "To return just a certain type"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string",
+            "description": "Textsearch in Name, ClubNames, ClubNumbers"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation; Returns Process as array",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Transfer"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          },
+          "404": {
+            "description": "Id not found",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "X-Auth-Token",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "Transfer": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "TRANSFER",
+            "TO_ASSOCIATION",
+            "FROM_ASSOCIATION"
+          ],
+          "example": "TRANSFER",
+          "description": "Type of PassTransfar"
+        },
+        "PersonID": {
+          "type": "string",
+          "format": "uuid",
+          "example": "006e0f16-ab9c-4080-bed9-b7a9daad7bee",
+          "description": "GUID of Person"
+        },
+        "BirthYear": {
+          "type": "integer",
+          "format": "int32",
+          "example": 2000
+        },
+        "LicenseID": {
+          "type": "string",
+          "pattern": "^(\\D{2,})[0-9]{7}$",
+          "example": "WÜ0000001"
+        },
+        "ReceiptDate": {
+          "type": "string",
+          "format": "date",
+          "example": "2000-10-01"
+        },
+        "LicenseStart": {
+          "type": "string",
+          "format": "date",
+          "example": "2000-01-01"
+        },
+        "LicenseEnd": {
+          "type": "string",
+          "format": "date",
+          "example": null
+        },
+        "ClubID": {
+          "type": "string",
+          "pattern": "^(\\D{2,})[0-9]{7}$",
+          "example": "WÜ0000001"
+        },
+        "ClubName": {
+          "type": "string"
+        },
+        "HomeClubID": {
+          "type": "string",
+          "pattern": "^(\\D{2,})[0-9]{7}$",
+          "example": "WÜ0000001"
+        },
+        "HomeClubName": {
+          "type": "string"
+        },
+        "PreviousLicenseStart": {
+          "type": "string",
+          "format": "date",
+          "example": "1999-01-01"
+        },
+        "PreviousLicenseEnd": {
+          "type": "string",
+          "format": "date",
+          "example": "1999-12-31"
+        },
+        "PreviousClubID": {
+          "type": "string",
+          "pattern": "^(\\D{2,})[0-9]{7}$",
+          "example": "WÜ0000002"
+        },
+        "PreviousClubName": {
+          "type": "string"
+        },
+        "PreviousHomeClubID": {
+          "type": "string",
+          "pattern": "^(\\D{2,})[0-9]{7}$",
+          "example": "WÜ0000002"
+        },
+        "PreviousHomeClubName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

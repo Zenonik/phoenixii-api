@@ -1,0 +1,641 @@
+openapi: 3.0.0
+info:
+  description: 'This is a simple description for the PhoenixII Athletes-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the API. These parameter will be given with API key.'
+  version: 1.3.2
+  title: Athletes API
+  contact:
+    email: phoenix-api@it4sport.de
+tags:
+  - name: athletes
+    description: act with the athletes search API.
+paths:
+  /athletes/search:
+    get:
+      tags:
+        - athletes
+      summary: Search for an athlete
+      description: With this API call you will get all athletes for your search.
+      operationId: searchAthletes
+      parameters:
+        - name: 'filter[firstname]'
+          in: query
+          description: Filter athletes by the firstname
+          required: true
+          schema:
+            type: string
+        - name: 'filter[lastname]'
+          in: query
+          description: Filter athletes by the lastname
+          required: true
+          schema:
+            type: string
+        - name: 'filter[gender]'
+          in: query
+          description: Filter athletes by the gender
+          required: false
+          schema:
+            type: string
+            enum:
+              - male
+              - female
+              - divers
+        - name: 'filter[birthdate]'
+          in: query
+          description: Filter athletes by the birthdate
+          required: true
+          example: '2001-01-12'
+          schema:
+            type: string
+            format: date
+            pattern: '^((?:19|20)\d\d)[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$'
+        - name: 'filter[club]'
+          in: query
+          description: 'Filter athletes by the club ID.<br>Value must follow pattern: (BA|BY|BE|BB|BR|BS|HH|HE|MV|NI|NO|PF|RH|RL|SL|SN|ST|SH|TH|WE|WÜ)([0-9]{7})'
+          required: false
+          schema:
+            type: string
+            pattern: '^(BA|BY|BE|BB|BR|BS|HH|HE|MV|NI|NO|PF|RH|RL|SL|SN|ST|SH|TH|WE|WÜ)([0-9]{7})$'
+            description: Phoenix II Club ID
+        - name: 'filter[id]'
+          in: query
+          description: 'Filter athletes by the athletes ID. __If this filter exists in the request, all other filters will be ignored.__<br>Value must follow pattern: (^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$)'
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+            description: Phoenix II Club ID
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: 404 Not Found
+      security:
+        - api_key: []
+  /athletes/change:
+    put:
+      tags:
+        - athletes
+      summary: Change contanct data for an athlete
+      description: With this API call you can change an athletes contact data
+      operationId: changeAthletes
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AthleteChange'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AthleteChange'
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeStatus'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 404 Not Found
+      security:
+        - api_key: []
+  /athletes/license-request:
+    post:
+      tags:
+        - athletes
+      summary: Request a new license
+      description: With this API call you can request a new license
+      operationId: requestAthelteLicense
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AthleteLicense'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AthleteLicense'
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeStatus'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 404 Not Found
+      security:
+        - api_key: []
+  /athletes/release-request:
+    post:
+      tags:
+        - athletes
+      summary: Request a transfer to another association
+      description: With this API call you can request to ask for transition in another association
+      operationId: requestAthleteRelease
+      requestBody:
+        required: true
+        description: This is the body of the request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AthleteTransfer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AthleteTransfer'
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeStatus'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 404 Not Found
+      security:
+        - api_key: []
+  /athletes/status:
+    get:
+      tags:
+        - athletes
+      summary: Check the status of a change or license request
+      description: With this API call you can check the status of a change or license request
+      operationId: statusForAthelteChange
+      parameters:
+        - name: 'filter[id]'
+          in: query
+          description: Search for a status by the status id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  license_status:
+                    $ref: '#/components/schemas/ChangeStatus'
+                  athlete_license:
+                    $ref: '#/components/schemas/AthleteLicense'
+        '404':
+          description: 404 Not Found
+      security:
+        - api_key: []
+servers:
+  - url: 'https://{env}athletics.it4sport.de/api/'
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+  - url: 'https://{env}api.it4sport.de/{client}/api/'
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+      client:
+        description: This is the client you will call the API
+        default: webinar
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header
+  schemas:
+    AthleteTransfer:
+      type: object
+      required:
+        - id
+        - firstname
+        - lastname
+        - birthdate
+        - gender
+        - license_from
+        - club_id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The athletes unique ID
+        firstname:
+          type: string
+          example: Erika
+          description: The athletes firstname
+        lastname:
+          type: string
+          example: Mustermann
+          description: The athletes lastname
+        birthdate:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: The athletes birthdate
+        gender:
+          type: string
+          example: F
+          enum:
+            - M
+            - F
+          description: The athletes gender
+        license_from:
+          type: string
+          format: date
+          example: '2020-01-01'
+        club_id:
+          type: string
+          example: WX00123456
+        applicant :
+          type: object
+          $ref: '#/components/schemas/Applicant'
+          description: The applicant of the club
+    AthleteLicense:
+      type: object
+      required:
+        - firstname
+        - lastname
+        - street
+        - postal
+        - city
+        - country
+        - birthdate
+        - gender
+        - email
+        - first_nationality
+        - nationality_date
+        - license_from
+        - club_id
+        - club_lg_id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The athletes unique ID
+        firstname:
+          type: string
+          example: Erika
+          description: The athletes firstname
+        lastname:
+          type: string
+          example: Mustermann
+          description: The athletes lastname
+        street:
+          type: string
+          example: Am Ring 99
+          description: The athletes street
+        postal:
+          type: string
+          example: '12345'
+          description: The athletes postal
+        city:
+          type: string
+          example: Musterstadt
+          description: The athletes city
+        country:
+          type: string
+          example: GER
+          description: The athletes country
+        birthdate:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: The athletes birthdate
+        gender:
+          type: string
+          example: F
+          enum:
+            - M
+            - F
+          description: The athletes gender
+        phone:
+          type: string
+          example: 01234 56789
+          description: The athletes phone number
+        mobile:
+          type: string
+          example: 01234 56789
+          description: The athletes mobile number
+        email:
+          type: string
+          example: abc@example.org
+          description: The athletes email
+        first_nationality:
+          type: string
+          example: GER
+          description: The athletes first nationality
+        nationality_date:
+          type: string
+          format: date
+          example: '2020-01-01'
+          description: Since when does the athletes first nationality exists
+        license_from:
+          type: string
+          format: date
+          example: '2020-01-01'
+        club_id:
+          type: string
+          example: WX00123456
+        club_lg_id:
+          type: string
+          example: WX00123456
+        legal_guardian:
+          type: array
+          items:
+            $ref: '#/components/schemas/LegalGuardian'
+          description: The athletes legal guardians. Required if the athlete is not yet of legal age.
+        club_confirmation:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubConfirmation'
+          description: The athletes confirmation of the club
+    LegalGuardian:
+      type: object
+      required:
+        - firstname
+        - lastname
+        - email
+      properties:
+        firstname:
+          type: string
+          example: Erika
+          description: The legal guardian firstname
+        lastname:
+          type: string
+          example: Mustermann
+          description: The legal guardian lastname
+        email:
+          type: string
+          example: john@example.org
+          description: The legal guardian email
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          example: F
+          description: The legal guardian gender
+        agreed_at:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: The legal guardian date of agreement
+    ClubConfirmation:
+      type: object
+      required:
+        - email
+        - agreed_at
+      properties:
+        name:
+          type: string
+          example: Max Mustermann
+          description: The name of the club confirmed person
+        email:
+          type: string
+          example: john@example.org
+          description: The mail of the club confirmed person
+        agreed_at:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: Date of agreement of the club confirmed person
+    Applicant:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: Max Mustermann
+          description: The name of the club confirmed person
+        email:
+          type: string
+          example: john@example.org
+          description: The mail of the club confirmed person
+        agreed_at:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: Date of agreement of the club confirmed person
+    AthleteChange:
+      type: object
+      required:
+        - id
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The athletes unique ID
+        street:
+          type: string
+          example: Am Ring 99
+          description: Update the athletes street
+        postal:
+          type: string
+          example: '12345'
+          description: Update the athletes postal
+        city:
+          type: string
+          example: Musterstadt
+          description: Update the athletes city
+        country:
+          type: string
+          example: GER
+          description: Update the athletes country
+        phone:
+          type: string
+          example: 01234 56789
+          description: Update the athletes phone number
+        mobile:
+          type: string
+          example: 01234 56789
+          description: Update the athletes mobile phone number
+        email:
+          type: string
+          example: abc@example.org
+          description: Update the athletes email
+    ChangeStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The change status unique ID. ID is used to request status changes.
+        status_type:
+          type: string
+          example: pending
+          enum:
+            - approved
+            - pending
+            - rejected
+          description: The status type
+        reason:
+          type: string
+          example: Borrowed items were not returned
+          maxLength: 1024
+    Athlete:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The clubs unique identifier
+        firstname:
+          type: string
+          example: Erik
+          description: The athletes firstname
+        lastname:
+          type: string
+          example: Mustermann
+          description: The athletes lastname
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          example: F
+          description: The athletes gender
+        birthdate:
+          type: string
+          format: date
+          example: '2001-01-12'
+          description: The athletes birthdate
+        first_nationality:
+          type: string
+          example: GER
+          description: The athletes first nationality
+        is_active:
+          type: boolean
+          example: true
+        club:
+          $ref: '#/components/schemas/Club'
+        license:
+          type: array
+          items:
+            $ref: '#/components/schemas/License'
+    Club:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+          description: The clubs unique identifier
+        number:
+          type: integer
+          format: int32
+          example: 75733
+          description: The clubs number (must not be unique)
+        club_number:
+          type: string
+          example: WX0123456
+        name:
+          type: string
+          example: TSV Musterhausem
+          description: The clubs name
+        short_name:
+          type: string
+          example: TSV MH
+          description: The clubs short name
+        city:
+          type: string
+          example: Musterhausen
+          description: The city location of the club
+        postal:
+          type: integer
+          format: int32
+          example: 74379
+          description: The postal code of the club
+    License:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7d342a44-7b0c-42d3-8900-13dd624eae88
+        license_number:
+          type: string
+          example: WX0123456
+        license_club:
+          type: string
+          example: WX0123456
+        home_club:
+          type: string
+          example: WX0123456
+        license_start:
+          type: string
+          format: date
+          example: '2020-01-01'
+        license_end:
+          type: string
+          format: date
+          example: '2020-01-01'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2020-01-01T0:00:00+01:00'
+    Meta:
+      type: object
+      properties:
+        results:
+          type: integer
+        dev:
+          type: object
+    ApiResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Athlete'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string

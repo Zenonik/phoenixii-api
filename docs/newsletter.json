@@ -1,0 +1,394 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is a simple description for the PhoenixII Newsletter-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the API. These parameter will be given with API key.",
+    "version": "1.0.0",
+    "title": "Newsletter API",
+    "contact": {
+      "email": "phoenix-api@it4sport.de"
+    }
+  },
+  "tags": [
+    {
+      "name": "newsletter",
+      "description": "act with the newsletter API."
+    }
+  ],
+  "paths": {
+    "/newsletter/newsletters": {
+      "get": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "show all newsletters for a client",
+        "description": "With this API call you will get all newsletters belong to your client.",
+        "operationId": "showNewsletters",
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsletterResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/newsletter/editions": {
+      "get": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "show all newsletter editons for a client",
+        "description": "With this API call you will get all newsletter editons belong to your client.",
+        "operationId": "showNewsletterEditons",
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsletterEditonResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/newsletter/{newsletter}/subscribers": {
+      "get": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "show all newsletter subscribers for a client",
+        "description": "With this API call you will get all newsletter subscribers belong to your client.",
+        "operationId": "showNewsletterSubscribers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "newsletter",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "The newsletters unique identifier"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "subscribers",
+                "required"
+              ]
+            },
+            "required": false,
+            "description": "Filters the subscribers by type. If filter is not applyed, data will be empty"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsletterSubscriberResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{env}api.it4sport.de/{client}/api/",
+      "variables": {
+        "env": {
+          "description": "This is the environment you will call the API",
+          "default": "test",
+          "enum": [
+            "test",
+            "testing",
+            "dev"
+          ]
+        },
+        "client": {
+          "description": "This is the client you will call the API",
+          "default": "webinar"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "X-Auth-Token",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "Newsletter": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7d342a44-7b0c-42d3-8900-13dd624eae88",
+            "description": "The newsletters unique identifier"
+          },
+          "name": {
+            "type": "string",
+            "example": "Verband Newsletter",
+            "description": "The newsletters name"
+          },
+          "description": {
+            "type": "string",
+            "example": "A description to the newsletter",
+            "description": "The newsletters description"
+          },
+          "online_registration": {
+            "type": "boolean",
+            "description": "Online registration is possible or not"
+          },
+          "sender_name": {
+            "type": "string",
+            "example": "Max Mustermann",
+            "description": "The newsletters sender name"
+          },
+          "sender_mail": {
+            "type": "string",
+            "example": "max@mustermann.de",
+            "description": "The newsletters sender mail"
+          },
+          "register_link": {
+            "type": "string",
+            "description": "If register is possible, link to register"
+          },
+          "type": {
+            "enum": [
+              "external",
+              "internal"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T0:00:00+01:00",
+            "description": "The newsletters updated date"
+          },
+          "mandant": {
+            "$ref": "#/components/schemas/Mandant"
+          }
+        }
+      },
+      "NewsletterEditon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7d342a44-7b0c-42d3-8900-13dd624eae88",
+            "description": "The newsletters unique identifier"
+          },
+          "headline": {
+            "type": "string",
+            "example": "Verband Newsletter Ausgabe 05/21",
+            "description": "The HEadline of the newsletter edition"
+          },
+          "write_to": {
+            "type": "string",
+            "example": "Sehr geehrte Damen und Herren",
+            "description": "First-Line / Anschreiben of the newsletter edition"
+          },
+          "sender_name": {
+            "type": "string",
+            "example": "Max Mustermann",
+            "description": "The newsletter editon sender name"
+          },
+          "sender_mail": {
+            "type": "string",
+            "example": "max@mustermann.de",
+            "description": "The newsletter editon sender mail"
+          },
+          "schedule": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T0:00:00+01:00",
+            "description": "The newsletter editon schedule date"
+          },
+          "send_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T0:00:00+01:00",
+            "description": "The newsletter editon sended date"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T0:00:00+01:00",
+            "description": "The newsletter editon updated date"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T0:00:00+01:00",
+            "description": "The newsletter editon created date"
+          },
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Newsletter"
+            }
+          },
+          "mandant": {
+            "$ref": "#/components/schemas/Mandant"
+          }
+        }
+      },
+      "NewsletterSubscriber": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7d342a44-7b0c-42d3-8900-13dd624eae88",
+            "description": "The newsletter subscriber unique identifier"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Max",
+            "description": "The subscribers firstname"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Mustermann",
+            "description": "The subscribers lastname"
+          },
+          "salutation_short": {
+            "type": "string",
+            "example": "Herr",
+            "description": "The subscribers short salutation"
+          },
+          "salutation": {
+            "type": "string",
+            "example": "Sehr geehrter Herr",
+            "description": "The subscribers full salutation"
+          },
+          "email": {
+            "type": "string",
+            "example": "max@mustermann.de",
+            "description": "The subscribers email address"
+          },
+          "unsubscribe": {
+            "type": "string",
+            "description": "If the subscribers can unsubscribe a link will be displayed"
+          }
+        }
+      },
+      "Mandant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "example": 15,
+            "description": "The unique id of the mandant/client"
+          },
+          "name": {
+            "type": "string",
+            "example": "Württembergischer Boxverband",
+            "description": "The name of the client"
+          },
+          "short_name": {
+            "type": "string",
+            "example": "Nord",
+            "description": "The short name of the client"
+          },
+          "sports_type": {
+            "type": "string",
+            "example": "bo",
+            "description": "The sportstype of the client"
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "integer"
+          },
+          "dev": {
+            "type": "object"
+          }
+        }
+      },
+      "NewsletterResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Newsletter"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "NewsletterEditonResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsletterEditon"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "NewsletterSubscriberResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsletterSubscriber"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      }
+    }
+  }
+}

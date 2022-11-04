@@ -1,0 +1,808 @@
+openapi: 3.0.0
+info:
+  description: This is a simple description for "Aufsteiger" via API in Phoenix II. In the
+    URL is the parameter {client} needed, this will call the right client for
+    the api. This parameter will be given with API key.
+  version: "1.1"
+  title: Aufsteiger Api
+  contact:
+    email: phoenix-api@it4sport.de
+paths:
+  /altersklassen:
+    get:
+      tags:
+        - altersklassen
+      summary: shows all possible "Altersklassen"
+      description: ""
+      operationId: altersklassen
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: successful operation; Returns Altersklassen as array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/altersklasse"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /saisons:
+    get:
+      tags:
+        - saisons
+      summary: shows all possible "Saisons"
+      description: ""
+      operationId: saisons
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: successful operation; Returns Saisons as array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/saisons"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /bezirke:
+    get:
+      tags:
+        - bezirke
+      summary: shows all possible "Bezirke"
+      description: ""
+      operationId: bezirke
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: successful operation; Returns Bezirke as array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/bezirk"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /staffeln:
+    get:
+      tags:
+        - staffeln
+      summary: shows all possible "Staffeln"
+      description: ""
+      operationId: staffeln
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: gruppe_id
+          in: query
+          description: gruppe_id is the server_id from altersklassen response
+          required: false
+          schema:
+            type: integer
+        - name: relegation
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+            enum:
+              - 1
+      responses:
+        "200":
+          description: successful operation; Returns Staffeln as array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/staffel"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /staffel:
+    get:
+      tags:
+        - staffel
+      summary: get details of "Staffel"
+      description: ""
+      operationId: staffel
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: staffel_id
+          in: query
+          description: ""
+          required: true
+          schema:
+            type: integer
+        - name: bereich
+          in: query
+          description: "A = get Ergebnisse of Staffel, B = get Tabelle of Staffel, D = get Infos of Staffel, E = get Zurückgezogene Mannschaften of Staffel, F = get Platzierungsliste, null = get everything"
+          required: false
+          schema:
+            type: string
+            enum:
+              - A
+              - B
+              - D
+              - E
+              - F
+      responses:
+        "200":
+          description: successful operation; Returns Staffel as array
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ergebnis:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ergebnis"
+                  tabelle:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tabelle"
+                  staffel:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/staffel2"
+                  zurueckgezogen:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/mannschaft"
+                  platzierung:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/platzierung"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /spielplan:
+    get:
+      tags:
+        - spielplan
+      summary: get details of "Spielplan"
+      description: ""
+      operationId: spieplan
+      parameters:
+        - name: X-Auth-Token
+          in: header
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: staffel_id
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - name: gespielt
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+            enum:
+              - 1
+        - name: mannschaft_id
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - name: spiel_id
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - name: vereins_nr
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - name: datefrom
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2000-12-31'
+        - name: dateto
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2000-12-31'
+      responses:
+        "200":
+          description: successful operation; Returns Spielplan as array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/spielplan"
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+servers:
+  - url: 'https://{client}.it4sport.de/api/aufsteiger'
+    variables:
+      client:
+        description: This is the client you will call the API
+        default: test
+        enum:
+          - testoehv
+          - testingoehv
+          - devoehv
+          - oehv
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        meta:
+          type: object
+          properties:
+            results:
+              type: integer
+              description: number of results returned
+            dev:
+              type: object
+              description: additional development parameters
+    altersklasse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "151"
+          description: id of Altersklasse
+        mandant_id:
+          type: integer
+          format: int32
+          example: 90
+          description: id of current mandant
+        server_id:
+          type: string
+          example: "151"
+          description: server id of Alterklasse
+        bezeichnung:
+          type: string
+          example: "Damen"
+    saisons:
+      type: object
+      properties:
+        SaisonNr:
+          type: string
+          example: "44"
+          description: id of Saison
+        SaisonBez:
+          type: string
+          example: "Jugend Feld 2021"
+          description: Bezeichnung of Saisons
+    bezirk:
+      type: object
+      properties:
+        NNUMMER:
+          type: string
+          example: "2"
+        CNAME:
+          type: string
+          example: "Burgenland"
+        art_id:
+          type: string
+    staffel:
+      type: object
+      properties:
+        staffel_id:
+          type: string
+          example: "13"
+        staffel:
+          type: string
+          example: "Bundesliga Damen"
+        ligaKatNr:
+          type: string
+          example: "151"
+        bezirks_id:
+          type: string
+          example: "2"
+        gewinnsaetze:
+          type: string
+          example: "0"
+        art_id:
+          type: string
+          example: "151"
+    staffel2:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Bundesliga Herren
+        gewinnsaetze:
+          type: string
+          example: "0"
+        staffelleiter:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Max Mustermann"
+              cVorname:
+                type: string
+                example: "Max"
+              cName:
+                type: string
+                example: "Mustermann"
+        ergebnisdienst:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Max Mustermann"
+              cVorname:
+                type: string
+                example: "Max"
+              cName:
+                type: string
+                example: "Mustermann"
+    ergebnis:
+      type: object
+      properties:
+        id:
+          type: "string"
+          example: "420790"
+        spielnr:
+          type: "string"
+          example: "1"
+        team1:
+          type: "string"
+          example: "HDI WAC"
+        team2:
+          type: "string"
+          example: "HG Mödling"
+        team1Nr:
+          type: "string"
+          example: "65320"
+        team2Nr:
+          type: "string"
+          example: "65325"
+        erg_team1:
+          type: "string"
+          example: "0"
+        erg_team2:
+          type: "string"
+          example: "0"
+        geprueft:
+          type: "string"
+          example: "1"
+        halle_id:
+          type: "string"
+          example: "588"
+        halle_name:
+          type: "string"
+          example: "WAC Platz"
+        halle_ort:
+          type: "string"
+          example: "Wien"
+        ausrichter_id:
+          type: "string"
+          example: "65320"
+        ausrichter_name:
+          type: "string"
+          example: "HDI WAC"
+        kommentar:
+          type: "string"
+          example: ""
+        datum:
+          type: "string"
+          example: "05.09.2020"
+        uhrzeit:
+          type: "string"
+          example: "16:30"
+        hallenoeffnung:
+          type: "string"
+          example: "01:00"
+        endergebnis_team1:
+          type: "string"
+          example: "15"
+        endergebnis_team2:
+          type: "string"
+          example: "0"
+        halbzeitergebnis_team1:
+          type: "string"
+          example: "5"
+        halbzeitergebnis_team2:
+          type: "string"
+          example: "0"
+        penaltyergebnis_team1:
+          type: "string"
+          example: "0"
+        penaltyergebnis_team2:
+          type: "string"
+          example: "0"
+    tabelle:
+      type: object
+      properties:
+        MSNR:
+          type: "string"
+          example: "65323"
+        MSSTAFFELNZUONR:
+          type: "string"
+          example: "54059"
+        MSABGERECHNET:
+          type: "string"
+          example: "0"
+        SCHLKRIT:
+          type: "string"
+          example: "0"
+        MSNRNICHT:
+          type: "string"
+          example: "0"
+        SPIELKLASSENRVS:
+          type: "string"
+          example: "0"
+        STAFFELNRVS:
+          type: "string"
+          example: "0"
+        SCHLUESSELNR:
+          type: "string"
+          example: "4"
+        STAFFELNR:
+          type: "string"
+          example: "8"
+        DP_BALLRATIO:
+          type: "string"
+          example: "0"
+        DP_SATZRATIO:
+          type: "string"
+          example: "0.0"
+        DP_0_2:
+          type: "string"
+          example: "0"
+        DP_2_1:
+          type: "string"
+          example: "0"
+        DP_2_0:
+          type: "string"
+          example: "0"
+        DP_2_3:
+          type: "string"
+          example: "0"
+        DP_1_3:
+          type: "string"
+          example: "0"
+        DP_0_3:
+          type: "string"
+          example: "0"
+        DP_3_0:
+          type: "string"
+          example: "0"
+        DP_3_1:
+          type: "string"
+          example: "0"
+        DP_3_2:
+          type: "string"
+          example: "0"
+        DP_2_2:
+          type: "string"
+          example: "0"
+        DP_1_1:
+          type: "string"
+          example: "0"
+        DP_ANZ_NIEDERLAGEN:
+          type: "string"
+          example: "1"
+        DP_ANZ_SIEGE:
+          type: "string"
+          example: "6"
+        DP_ANZ_UNENTSCHIEDEN:
+          type: "string"
+          example: "0"
+        DP_PUNKTE:
+          type: "string"
+          example: "19.0"
+        DP_PLATZ:
+          type: "string"
+          example: "1"
+        SAETZEDIFF:
+          type: "string"
+          example: "0"
+        MINUSBAELLE:
+          type: "string"
+          example: "0"
+        PLUSBAELLE:
+          type: "string"
+          example: "0"
+        MINUSSAETZE:
+          type: "string"
+          example: "0"
+        PLUSSAETZE:
+          type: "string"
+          example: "0"
+        SPIELEGP:
+          type: "string"
+          example: "0"
+        SPIELE:
+          type: "string"
+          example: "7"
+        PUNKTEDIFF:
+          type: "string"
+          example: "10"
+        PUNKTEM:
+          type: "string"
+          example: "2"
+        PUNKTEP:
+          type: "string"
+          example: "12"
+        DP_1_2:
+          type: "string"
+          example: "0"
+        DP_PUNKTRATIO:
+          type: "string"
+          example: "2.7142857142857002"
+        MANNSCHAFT__MSNAME:
+          type: "string"
+          example: "Post SV"
+        MANNSCHAFT__VEREINSNR:
+          type: "string"
+          example: "2"
+        MANNSCHAFT__MSNR:
+          type: "string"
+          example: "65323"
+        UNENTSCHIEDENERLAUBT:
+          type: "string"
+          example: "1"
+        Punktabzug:
+          type: "string"
+          example: ""
+        ToreDiff:
+          type: "string"
+          example: "53"
+        ToreM:
+          type: "string"
+          example: "7"
+        ToreP:
+          type: "string"
+          example: "60"
+    platzierung:
+      type: object
+      properties:
+        Platz:
+          type: string
+          example: "1"
+        teamname:
+          type: string
+          example: "HC Wien 1"
+        team_id:
+          type: string
+          example: '51234'
+    mannschaft:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "64453"
+        name:
+          type: string
+          example: "Mustermannschaft"
+        verein_id:
+          type: string
+          example: "17"
+        gruppe_id:
+          type: string
+          example: "151"
+        liganame:
+          type: string
+          example: "Bundesliga"
+        bezeichnung:
+          type: string
+          example: "Damen"
+        staffel_nr:
+          type: string
+          example: "17"
+        staffel_name:
+          type: string
+          example: "Bundesliga Damen"
+        bezirks_nr:
+          type: string
+          example: "2"
+    spielplan:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '420956'
+        spielnr:
+          type: string
+          example: '2'
+        team1:
+          type: string
+          example: "HC Wien"
+        team2:
+          type: string
+          example: "NAVAX AHTC"
+        team1_id:
+          type: string
+          example: '65336'
+        team2_id:
+          type: string
+          example: '65337'
+        erg_team1:
+          type: string
+          example: '0'
+        erg_team2:
+          type: string
+          example: '0'
+        geprueft:
+          type: string
+          example: '1'
+        halle_id:
+          type: string
+          example: '585'
+        halle_name:
+          type: string
+          example: "Hockeystadion"
+        halle_strasse:
+          type: string
+          example: "Prater Hauptallee 123a"
+        halle_plz:
+          type: string
+          example: '1020'
+        halle_ort:
+          type: string
+          example: "Wien"
+        ausrichter_id:
+          type: string
+          example: '65336'
+        ausrichter_name:
+          type: string
+          example: "HC Wien"
+        kommentar:
+          type: string
+          example: ''
+        datum:
+          type: string
+          example: "06.09.2020"
+        uhrzeit:
+          type: string
+          example: '11:00'
+        hallenoeffnung:
+          type: string
+          example: '01:00'
+        spieltag:
+          type: string
+          example: '1'
+        staffel:
+          type: string
+          example: "Bundesliga Damen"
+        StaffelNr:
+          type: string
+          example: '13'
+        gruppe_id:
+          type: string
+          example: ""
+        beidemsverloren:
+          type: string
+          example: ""
+        endergebnis_team1:
+          type: string
+          example: '0'
+        endergebnis_team2:
+          type: string
+          example: '3'
+        halbzeitergebnis_team1:
+          type: string
+          example: '0'
+        halbzeitergebnis_team2:
+          type: string
+          example: '1'
+        penaltyergebnis_team1:
+          type: string
+          example: '0'
+        penaltyergebnis_team2:
+          type: string
+          example: '0'
+        verein_sr1:
+          type: string
+          example: ''
+        verein_sr2:
+          type: string
+          example: ''
+        sr1:
+          type: string
+          example: ''
+        sr2:
+          type: string
+          example: ''
+        torschuetzenHeim:
+          type: array
+          items:
+            $ref: "#/components/schemas/torschuetze"
+        torschuetzenGast:
+          type: array
+          items:
+            $ref: "#/components/schemas/torschuetze"
+    torschuetze:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Max Mustermann"
+        tore:
+          type: string
+          example: "4"

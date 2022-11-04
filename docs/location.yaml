@@ -1,0 +1,148 @@
+---
+openapi: 3.0.0
+info:
+  title: Locations API
+  description: This is a simple description for the PhoenixII Locations-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the API. These parameter will be given with API key.
+  contact:
+    email: phoenix-api@it4sport.de
+  version: 1.1.13
+servers:
+  - url: https://{env}api.it4sport.de/{client}/api/
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+      client:
+        description: This is the client you will call the API
+        default: webinar
+tags:
+  - name: locations
+    description: act with the locations API.
+paths:
+  /location/locations:
+    get:
+      tags:
+        - locations
+      summary: show all locations for a client
+      description: With this API call you will get all locations belong to your client.
+      operationId: showLocations
+      parameters:
+        - name: limit
+          in: query
+          description: 'Use to limit the amount of locations. Default: 25 | Max: 1000'
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: The page offset in pagination
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: filter[id]
+          in: query
+          description: Filter locations by the id
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: filter[loc_id]
+          in: query
+          description: Filter locations by the location id
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: filter[zip]
+          in: query
+          description: Filter locations by the zip
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: filter[name]
+          in: query
+          description: Filter locations by name
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - api_key: []
+components:
+  schemas:
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The locations id
+          format: int32
+          example: 4
+        loc_id:
+          type: integer
+          description: The locations loc_id (must not be unique)
+          format: int32
+          example: 13352
+        zip:
+          type: integer
+          description: The locations loc_id (must not be unique)
+          format: int32
+          example: 52062
+        name:
+          type: string
+          description: The locations name
+          example: Aachen
+        longitude:
+          type: number
+          format: float
+          example: 9.172345
+        latitude:
+          type: number
+          format: float
+          example: 48.172345
+    Meta:
+      type: object
+      properties:
+        results:
+          type: integer
+        dev:
+          type: object
+    ApiResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        meta:
+          $ref: '#/components/schemas/Meta'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header

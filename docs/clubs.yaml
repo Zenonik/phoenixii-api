@@ -1,0 +1,373 @@
+openapi: 3.0.0
+info:
+  description: This is a simple description for the PhoenixII Clubs-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the
+    API. These parameter will be given with API key.
+  version: 1.1.13
+  title: Clubs API
+  contact:
+    email: phoenix-api@it4sport.de
+tags:
+  - name: clubs
+    description: act with the clubs API.
+paths:
+  /official/clubs:
+    get:
+      tags:
+        - clubs
+      summary: show all clubs for a client
+      description: "With this API call you will get all clubs belong to your client."
+      operationId: showClubs
+      parameters:
+        - name: limit
+          in: query
+          description: "Use to limit the amount of clubs. Default: 25 | Max: 1000"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: "The page offset in pagination"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: filter[clubname]
+          in: query
+          description: "Filter clubs by the clubsname"
+          required: false
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: "Comma seperated list of additional relations that should be fetched. Allowed: membership, disciplines, postaddress, finderaddress, county, subcounty, mandant"
+          required: false
+          schema:
+            type: string
+        - name: updated
+          in: query
+          description: "Use to limit the results of clubs by their last changed date. Default: none | Max: -28"
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+      security:
+        - api_key: []
+servers:
+  - url: 'https://{env}api.it4sport.de/{client}/api/'
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+      client:
+        description: This is the client you will call the API
+        default: "webinar"
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header
+  schemas:
+    Club:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The clubs unique identifier"
+        number:
+          type: integer
+          format: int32
+          example: 75733
+          description: "The clubs number (must not be unique)"
+        name:
+          type: string
+          example: "TSV Musterhausem"
+          description: "The clubs name"
+        short_name:
+          type: string
+          example: "TSV MH"
+          description: "The clubs short name"
+        city:
+          type: string
+          example: "Musterhausen"
+          description: "The city location of the club"
+        postal:
+          type: integer
+          format: int32
+          example: 74379
+          description: "The postal code of the club"
+        joining_date:
+          type: string
+          format: "date-time"
+          example: "2020-01-01T0:00:00+01:00"
+          description: "The clubs joining date"
+        leaving_date:
+          type: string
+          format: "date-time"
+          example: "2020-01-01T0:00:00+01:00"
+          description: "The clubs leaving date"
+        longitude:
+          type: number
+          format: float
+          example: 9.172345
+        latitude:
+          type: number
+          format: float
+          example: 48.172345
+        founding_year:
+          type: string
+          example: "2020"
+          description: "The clubs founding year"
+        section_founding_year:
+          type: string
+          example: "2020"
+          description: "The clubs founding year"
+        www:
+          type: string
+          example: "https://tsv-musterhausen.de"
+          description: "The clubs webaddress"
+        social:
+          type: array
+          items:
+            $ref: "#/components/schemas/Social"
+        updated_at:
+          type: string
+          format: "date-time"
+          example: "2020-01-01T0:00:00+01:00"
+          description: "The clubs leaving date"
+        membership:
+          $ref: "#/components/schemas/Membership"
+        postaddress:
+          $ref: "#/components/schemas/ClubFunction"
+        finderaddress:
+          $ref: "#/components/schemas/ClubFunction"
+        disciplines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Discipline"
+        county:
+          $ref: "#/components/schemas/County"
+        sub_county:
+          $ref: "#/components/schemas/County"
+        mandant:
+          $ref: "#/components/schemas/Mandant"
+    Membership:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        name:
+          type: string
+          example: "Vollmitglied"
+        is_member:
+          type: boolean
+          example: true
+          description: "True or false if a club is a member of the organisation"
+    ClubFunction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        description:
+          type: string
+          description: "The name of the assigned function"
+          example: "Postanschrift"
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: "Benzstraße 37"
+            postal:
+              type: string
+              example: "70736"
+            city:
+              type: string
+              example: "Fellbach"
+            country:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Deutschland"
+                iso:
+                  type: string
+                  example: "DE"
+                ioc:
+                  type: string
+                  example: "GER"
+                country_code:
+                  type: string
+                  example: "D"
+            longitude:
+              type: number
+              format: float
+              example: 9.172345
+            latitude:
+              type: number
+              format: float
+              example: 48.172345
+        email:
+          type: string
+          description: "The public email of the person"
+          example: "john@doe.com"
+    Social:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+        field_1:
+          type: string
+          example: "@TsvMusterhausen"
+        field_2:
+          type: string
+          example: null
+        field_3:
+          type: string
+          example: null
+        field_4:
+          type: string
+          example: null
+        field_5:
+          type: string
+          example: null
+        shipping_address:
+          type: boolean
+          example: true
+          description: "Is only displayed if address is a shipping address"
+        type:
+          $ref: "#/components/schemas/CommunicationType"
+        updated_at:
+          type: string
+          format: "date-time"
+          example: "2020-01-01T0:00:00+01:00"
+          description: "The clubs leaving date"
+    Discipline:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the discipline"
+        name:
+          type: string
+          example: "Jugendabteilung"
+          description: "The name of the discipline"
+        short_name:
+          type: string
+          example: "JA"
+          description: "The short name of the discipline"
+        scope:
+          type: integer
+          format: int32
+          example: 1
+          description: "The discipline scope to use"
+        min_age:
+          type: integer
+          format: int32
+          example: 0
+          description: "The discipline minimum age people can join"
+        max_age:
+          type: integer
+          format: int32
+          example: 19
+          description: "The discipline maximum age people can join"
+    CommunicationType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the social type."
+        description:
+          type: string
+          example: "Facebook"
+          description: "Contains the social type (Facebook, Twitter, Instagram, ...)"
+    County:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7d342a44-7b0c-42d3-8900-13dd624eae88"
+          description: "The unique id of the county"
+        level:
+          type: integer
+          format: int32
+          example: 21
+          description: "The county level (21 for county, 22 for subcounty / Bezirk&Kreis)"
+        number:
+          type: integer
+          format: int32
+          example: 7
+          description: "The internal county sort index"
+        name:
+          type: string
+          example: "Nord"
+          description: "The name of the county"
+        short_name:
+          type: string
+          example: "Nord"
+          description: "The short name of the county"
+        abbreviation:
+          type: string
+          example: "NO"
+          description: "The abbreviation of the county"
+    Mandant:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 15
+          description: "The unique id of the mandant/client"
+        name:
+          type: string
+          example: "Württembergischer Boxverband"
+          description: "The name of the client"
+        short_name:
+          type: string
+          example: "Nord"
+          description: "The short name of the client"
+        sports_type:
+          type: string
+          example: "bo"
+          description: "The sportstype of the client"
+    Meta:
+      type: object
+      properties:
+        results:
+          type: integer
+        dev:
+          type: object
+    ApiResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Club"
+        meta:
+          $ref: "#/components/schemas/Meta"
