@@ -644,7 +644,7 @@ components:
         SeminarbeschreibungDetail:
           type: string
           example: null
-          maxLength: 400
+          maxLength: 1000000
         Leistungen:
           type: string
           example: "inkl. Übernachtung und Verpflegung"
