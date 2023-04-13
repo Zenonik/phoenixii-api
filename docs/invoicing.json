@@ -350,7 +350,7 @@
           "groupText": {
             "type": "string",
             "description": "Provide the invoice header text for the invoices. Fee rates with the same invoice header text will be grouped.",
-            "example": "Event XYZ",
+            "example": "",
             "default": ""
           }
         }

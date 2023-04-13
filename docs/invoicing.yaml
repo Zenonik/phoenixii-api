@@ -253,9 +253,9 @@ components:
           default: 0
         groupText:
           type: string
-          description: Provide the invoice header text for the invoices. Fee rates
-            with the same invoice header text will be grouped.
-          example: Event XYZ
+          description: "Provide the invoice header text for the invoices. Fee rates
+            with the same invoice header text will be grouped."
+          example: ""
           default: ""
     ApiResponse:
       type: object
