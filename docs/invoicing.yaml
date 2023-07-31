@@ -57,6 +57,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+        422:
+          description: Prevalidation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiValidationResponse'
       security:
         - api_key: []
       x-codegen-request-body-name: body
@@ -283,6 +289,14 @@ components:
             recipientId:
               type: integer
           description: This is just set, if new Persons are created with id attribute.
+    ApiValidationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          example: '{"0.recipientId": ["0.recipientId wrong format."]}'
     Process:
       type: object
       properties:
