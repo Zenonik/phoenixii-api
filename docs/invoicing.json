@@ -345,7 +345,7 @@
           },
           "costCenter": {
             "type": "string",
-            "description": "Contains the indicator whether the fee rate should be assigned to a cost center and, if so, whether the association cost center to which the person is assigned. It is also possible to enter a real cost center number."
+            "description": "Contains the indicator whether the fee rate should be assigned to a cost center and, if so, whether the association cost center to which the person is assigned. It is also possible to enter a real cost center number. Possible Values for costCenters are found in /costcenters with the value of costcenterNrImport"
           },
           "deliveryNote": {
             "type": "boolean",
