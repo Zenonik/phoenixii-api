@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  description: This is a simple description for the PhoenixII Clubs-API. The parameters {env} and {client} in the URL are needed. They represent the right environment and client for the
+    API. These parameter will be given with API key.
+  version: 1.1.13
+  title: Running Meetings API
+  contact:
+    email: phoenix-api@it4sport.de
+tags:
+  - name: running meetings
+    description: act with the running meetings API.
+paths:
+  /running-meetings/:
+    get:
+      tags:
+        - running meetings
+      summary: returns meetings
+      parameters:
+        - name: stateId
+          in: query
+          description: "Use to get a certain LV"
+          schema:
+            type: string
+            pattern: '^(BA|BY|BE|BB|BR|BS|HH|HE|MV|NI|NO|PF|RH|RL|SL|SN|ST|SH|TH|WE|WÜ)'
+        - name: changedSince
+          in: query
+          description: "If it is set, the server will respond with just changed meetings since X Days"
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+servers:
+  - url: 'https://{env}api.it4sport.de/{client}/api/'
+    variables:
+      env:
+        description: This is the environment you will call the API
+        default: test
+        enum:
+          - test
+          - testing
+          - dev
+      client:
+        description: This is the client you will call the API
+        default: "webinar"
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth-Token
+      in: header
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meeting"
+    Meeting:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: 'TSV Musterhausen Walkingtreff'
+        type:
+          type: string
+          enum: [WALKING, NODRIC_WALKING, RUNNING]
+        certification:
+          type: string
+          enum: [DEFAULT, GOOD, VERY_GOOD]
+        homepage:
+          type: string
+          format: url
+          example: 'https://www.tsv-musterhausen.de/walking'
+        email:
+          type: string
+          example: 'kontakt@tsv-musterhausen.de; walking@tsv-musterhausen.de'
+        changed_at:
+          type: string
+          format: date-time
+        club:
+          type: object
+          properties:
+            name:
+              example: 'TSV Musterhausen'
+            id:
+              type: string
+              pattern: "^(BA|BY|BE|BB|BR|BS|HH|HE|MV|NI|NO|PF|RH|RL|SL|SN|ST|SH|TH|WE|WÜ|BW)[0-9]{7}"
+            post_code:
+              type: string
+              example: '12345'
+            place:
+              type: string
+              example: 'Musterhausen'
+        meeting_points:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeetingPoint"
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contact"
+    Contact:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [WALKING, NODRIC_WALKING, RUNNING]
+        name:
+          type: string
+          example: "Max Mustermann"
+        mail:
+          type: string
+          format: email
+    MeetingPoint:
+      type: object
+      properties:
+        is_main:
+          type: boolean
+        meeting_point:
+          type: string
+        post_code:
+          type: string
+          example: '12345'
+        place:
+          type: string
+          example: 'Musterhausen'
+        weekdays:
+          type: string
+        time:
+          type: string
