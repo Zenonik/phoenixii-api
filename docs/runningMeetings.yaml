@@ -89,6 +89,11 @@ components:
         email:
           type: string
           example: 'kontakt@tsv-musterhausen.de; walking@tsv-musterhausen.de'
+        offers:
+          type: array
+          items:
+            type: string
+            enum: [WALKING, NODRIC_WALKING, RUNNING]
         changed_at:
           type: string
           format: date-time
