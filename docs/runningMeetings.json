@@ -145,9 +145,9 @@
 			"items": {
 			  "type": "string",
 			  "enum": [
-				"DEFAULT",
-				"GOOD",
-				"VERY_GOOD"
+				"WALKING",
+				"NODRIC_WALKING",
+				"RUNNING"
 			  ]
 			}
 		  },
