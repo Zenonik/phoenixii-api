@@ -6,7 +6,7 @@
     "contact": {
       "email": "phoenix-api@it4sport.de"
     },
-    "version": "1.0.7"
+    "version": "1.0.8"
   },
   "servers": [
     {
@@ -419,9 +419,14 @@
       "Process": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "process": {
             "type": "string",
             "description": "Process for import invoicing",
+            "nullable": true,
             "example": "Finisher"
           },
           "articleNr": {
@@ -431,6 +436,7 @@
           },
           "articleName": {
             "type": "string",
+            "nullable": true,
             "example": "Finisher U18 und älter"
           },
           "price": {

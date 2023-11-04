@@ -6,7 +6,7 @@ info:
     the api. This parameter will be given with API key.
   contact:
     email: phoenix-api@it4sport.de
-  version: 1.0.7
+  version: 1.0.8
 servers:
   - url: https://{client}.it4sport.de/api/invoicing
 tags:
@@ -300,9 +300,13 @@ components:
     Process:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         process:
           type: string
           description: Process for import invoicing
+          nullable: true
           example: Finisher
         articleNr:
           type: integer
@@ -310,6 +314,7 @@ components:
           example: 444
         articleName:
           type: string
+          nullable: true
           example: Finisher U18 und älter
         price:
           type: integer
