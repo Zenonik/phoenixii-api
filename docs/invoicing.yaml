@@ -6,7 +6,7 @@ info:
     the api. This parameter will be given with API key.
   contact:
     email: phoenix-api@it4sport.de
-  version: 1.0.8
+  version: 1.0.9
 servers:
   - url: https://{client}.it4sport.de/api/invoicing
 tags:
@@ -218,7 +218,7 @@ components:
           description: is needed to create a new person, if recipientId = 0
         process:
           type: string
-          description: ""
+          description: "Can be process field from processes API or GUID class 4 id from processes API"
           example: BescheidVb
         costs:
           type: number

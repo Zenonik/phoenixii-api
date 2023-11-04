@@ -6,7 +6,7 @@
     "contact": {
       "email": "phoenix-api@it4sport.de"
     },
-    "version": "1.0.8"
+    "version": "1.0.9"
   },
   "servers": [
     {
@@ -316,7 +316,7 @@
           },
           "process": {
             "type": "string",
-            "description": "",
+            "description": "Can be process field from processes API or GUID class 4 id from processes API",
             "example": "BescheidVb"
           },
           "costs": {
