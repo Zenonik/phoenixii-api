@@ -87,6 +87,51 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
       security:
         - api_key: []
+
+  /clubs/sports-facilities:
+    get:
+      tags:
+        - sports-facilities
+      summary: show all sports-facilities for a client
+      description: "With this API call you will get all sports-facilities belong to your client."
+      operationId: showClubsSportsFacilities
+      parameters:
+        - name: limit
+          in: query
+          description: "Use to limit the amount of sports-facilities. Default: 25 | Max: 1000"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: "The page offset in pagination"
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: filter[name]
+          in: query
+          description: "Filter sports-facilities by the name"
+          required: false
+          schema:
+            type: string
+        - name: filter[mandant]
+          in: query
+          description: "Filter sports-facilities by the clients id"
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SportsFacilitiesApiResponse"
+      security:
+        - api_key: []
 servers:
   - url: 'https://{env}api.it4sport.de/{client}/api/'
     variables:
@@ -535,6 +580,179 @@ components:
           type: string
           example: "bo"
           description: "The sportstype of the client"
+    SportsFacility:
+      type: object
+      properties:
+        SpfeldNr:
+          type: integer
+          format: int32
+          example: 113
+          description: "The Number of the sports-facility"
+        SpfeldName1:
+          type: string
+          example: "Sporthalle Simpleberg"
+          description: "Name der Sporteinrichtung"
+        SpfeldName2:
+          type: string
+          example: "Bergen 1"
+          description: "Zusätzlicher Name der Sporteinrichtung"
+        SpfeldName3:
+          type: string
+          example: ""
+          description: "Weiterer Name der Sporteinrichtung"
+        SpfeldPLZ:
+          type: string
+          example: "70736"
+          description: "Postleitzahl der Sporteinrichtung"
+        SpfeldStr:
+          type: string
+          example: "Benzstr. 37"
+          description: "Straße der Sporteinrichtung"
+        SpfeldOrt:
+          type: string
+          example: "Fellbach"
+          description: "Ort der Sporteinrichtung"
+        SpfeldTel:
+          type: string
+          example: "01234 56789"
+          description: "Telefonnummer der Sporteinrichtung"
+        SpfeldBemerkung:
+          type: string
+          example: ""
+          description: "Bemerkung zur Sporteinrichtung"
+        GeoLaenge:
+          type: number
+          format: float
+          example: 9.2537419
+          description: "Geographische Länge der Sporteinrichtung"
+        GeoBreite:
+          type: number
+          format: float
+          example: 48.8386198
+          description: "Geographische Breite der Sporteinrichtung"
+        Boden:
+          type: string
+          example: "Haftmittel verboten"
+          description: "Art des Bodens in der Sporteinrichtung"
+        BodenKurz:
+          type: string
+          example: null
+          description: "Kurzbeschreibung des Bodens in der Sporteinrichtung"
+        Bezirk:
+          type: string
+          example: "Rems-Stuttgart"
+          description: "Bezirk der Sporteinrichtung"
+        VerbandNrDV:
+          type: integer
+          format: int32
+          example: 7
+          description: "Verbandsnummer DV der Sporteinrichtung"
+        uVerbandBezirk:
+          type: string
+          example: "6CCBE7D7-EC13-4B4F-9296-B1618B4313EB"
+          description: "Verbandsbezirk der Sporteinrichtung"
+        BezirkKurz:
+          type: string
+          example: "RS"
+          description: "Kurzbeschreibung des Bezirks der Sporteinrichtung"
+        Kreis:
+          type: string
+          example: null
+          description: "Kreis der Sporteinrichtung"
+        Hauptspielstaette:
+          type: string
+          example: null
+          description: "Hauptspielstätte der Sporteinrichtung"
+        Haftmittelhinweis:
+          type: string
+          example: ""
+          description: "Hinweis zu Haftmitteln in der Sporteinrichtung"
+        SpFeldNrExtern:
+          type: string
+          example: "3082"
+          description: "Externe Nummer der Sporteinrichtung"
+        BodenNr:
+          type: integer
+          format: int32
+          example: 2
+          description: "Nummer des Bodens in der Sporteinrichtung"
+        nMandant:
+          type: integer
+          format: int32
+          example: 1
+          description: "Mandantennummer der Sporteinrichtung"
+        SpfeldLKZ:
+          type: string
+          example: "10051"
+          description: "LKZ der Sporteinrichtung"
+        SpfeldLKZ2:
+          type: string
+          example: null
+          description: "Zweiter LKZ der Sporteinrichtung"
+        barrierefreiheit:
+          type: object
+          description: "Barrierefreiheit der Sporteinrichtung"
+        abnahmebogen:
+          type: object
+          description: "Abnahmebogen der Sporteinrichtung"
+        gasthalle:
+          type: boolean
+          example: false
+          description: "Ist Gasthalle"
+        Mandant:
+          type: string
+          example: "HVWü"
+          description: "Mandant der Sporteinrichtung"
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "Sonstiges"
+                description: "Dateityp"
+              typeNr:
+                type: integer
+                format: int32
+                example: 1
+                description: "Dateityp Nummer"
+              name:
+                type: string
+                example: "Anlage_zum_Hygienekonzept.pdf"
+                description: "Dateiname"
+              comment:
+                type: string
+                example: ""
+                description: "Kommentar"
+              public:
+                type: boolean
+                example: false
+                description: "Öffentlich"
+              changedAt:
+                type: string
+                example: "2023-01-01 01:01:01"
+                description: "Geändert am"
+              uVerein:
+                type: string
+                example: "6CCBE7D7-EC13-4B4F-9296-B1618B4313EB"
+                description: "Vereins ID"
+              vereinNr:
+                type: string
+                example: "4711"
+                description: "Vereins Nummer"
+              verein:
+                type: string
+                example: "TSV Musterhausen"
+                description: "Verein"
+              file:
+                type: string
+                description: "URL Abruf"
+          description: "Die Dateien der Sporteinrichtung"
+        uVerbandMandant:
+          type: string
+          example: "6CCBE7D7-EC13-4B4F-9296-B1618B4313EB"
+          description: "Verbandsmandant der Sporteinrichtung"
     Meta:
       type: object
       properties:
@@ -549,5 +767,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Club"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    SportsFacilitiesApiResponse:
+      type: object
+      properties:
+        spielstaetten:
+          type: array
+          items:
+            $ref: "#/components/schemas/SportsFacility"
         meta:
           $ref: "#/components/schemas/Meta"
