@@ -62,6 +62,57 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "filter[SeminarNr]",
+            "in": "query",
+            "description": "Filter by course number.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[SeminarBeschreibung]",
+            "in": "query",
+            "description": "Filter by a part of the course description.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[MitVereinsfreigabe]",
+            "in": "query",
+            "description": "Filter courses where the club approval is needed.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "filter[MindestalterLgBeginn]",
+            "in": "query",
+            "description": "Filter by minimum age at the start of the course",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "filter[OnlineArtNr]",
+            "in": "query",
+            "description": "Filter by online diplay type. Allowed values:\n- 1: 'Nicht Anzeigen'\n- 2: 'Anzeigen ohne Anmeldung'\n- 3: 'Anzeigen mit Anmeldung'\n- 4: 'Einladung'\n",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4
+              ]
+            }
           }
         ],
         "responses": {
@@ -1359,6 +1410,12 @@
           "mail": {
             "type": "string",
             "example": "rundsport@musterhalle.de"
+          },
+          "county": {
+            "$ref": "#/components/schemas/County"
+          },
+          "sub_county": {
+            "$ref": "#/components/schemas/County"
           },
           "longitude": {
             "type": "number",

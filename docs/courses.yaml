@@ -45,6 +45,42 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: filter[SeminarNr]
+          in: query
+          description: "Filter by course number."
+          required: false
+          schema:
+            type: string
+        - name: filter[SeminarBeschreibung]
+          in: query
+          description: "Filter by a part of the course description."
+          required: false
+          schema:
+            type: string
+        - name: filter[MitVereinsfreigabe]
+          in: query
+          description: "Filter courses where the club approval is needed."
+          required: false
+          schema:
+            type: boolean
+        - name: filter[MindestalterLgBeginn]
+          in: query
+          description: "Filter by minimum age at the start of the course"
+          required: false
+          schema:
+            type: boolean
+        - name: filter[OnlineArtNr]
+          in: query
+          description: |
+            Filter by online diplay type. Allowed values:
+            - 1: 'Nicht Anzeigen'
+            - 2: 'Anzeigen ohne Anmeldung'
+            - 3: 'Anzeigen mit Anmeldung'
+            - 4: 'Einladung'
+          required: false
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4]
       responses:
         "200":
           description: successful
@@ -915,6 +951,10 @@ components:
         mail:
           type: string
           example: "rundsport@musterhalle.de"
+        county:
+          $ref: "#/components/schemas/County"
+        sub_county:
+          $ref: "#/components/schemas/County"
         longitude:
           type: number
           format: float
