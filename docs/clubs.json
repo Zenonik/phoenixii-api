@@ -133,6 +133,40 @@
         ]
       }
     },
+    "/clubs/membership": {
+      "post": {
+        "summary": "Submit membership data for multiple clubs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ClubMembershipData"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Membership data successfully received"
+          },
+          "400": {
+            "description": "Invalid data provided"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
     "/clubs/sports-facilities": {
       "get": {
         "tags": [
@@ -1017,6 +1051,83 @@
           },
           "meta": {
             "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "ClubMembershipData": {
+        "type": "object",
+        "properties": {
+          "club_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The unique identifier of the club (UUID or LSBNr)"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B"
+            ],
+            "description": "The type of the club"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The year of the data"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgeData"
+            }
+          }
+        }
+      },
+      "AgeData": {
+        "type": "object",
+        "properties": {
+          "age": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 109,
+            "description": "The age group"
+          },
+          "amount_male": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of male members"
+          },
+          "amount_female": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of female members"
+          },
+          "amount_non_binary": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of non-binary members"
+          },
+          "amount_none": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of members with no gender specified"
+          },
+          "amount_male_disabled": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of disabled male members"
+          },
+          "amount_female_disabled": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 999999,
+            "description": "The number of disabled female members"
           }
         }
       }
