@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "description": "This is a simple description for the PhoenixII Squads-API. SquadIDs have the following meaning: 11 => OK, 12 => PK, 13 => EK, 14 => NK 1 U23, 15 => NK 1 U23, 16 => NK 2, 72 => Berglauf, 73 => Ultramarathon 100 km, 74 => Ultramarathn 24 h, 83 => Nationalmannschaft (2022).",
+    "description": "This is a simple description for the PhoenixII Squads-API. SquadIDs in /kader have the following meaning: 11 => OK, 12 => PK, 13 => EK, 14 => NK 1 U23, 15 => NK 1 U23, 16 => NK 2, 72 => Berglauf, 73 => Ultramarathon 100 km, 74 => Ultramarathn 24 h, 83 => Nationalmannschaft (2022).",
     "version": "1.0.0",
     "title": "Squads API",
     "contact": {
@@ -10,16 +10,21 @@
   },
   "tags": [
     {
-      "name": "Kader",
-      "description": "act with the persons search API."
+      "name": "Squad",
+      "description": "act with the squad search API."
+    },
+    {
+      "name": "Squad Athletes",
+      "description": "act with the squad athlete search API."
     }
   ],
   "paths": {
     "/kader": {
       "get": {
         "tags": [
-          "Kader"
+          "Squad"
         ],
+        "summary": "returns squad (for leichtathletik)",
         "parameters": [
           {
             "in": "header",
@@ -39,6 +44,113 @@
                 "schema": {
                   "$ref": "#/components/schemas/Squads"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Squads"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/squads": {
+      "get": {
+        "tags": [
+          "Squad"
+        ],
+        "summary": "returns squads",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Auth-Token",
+            "required": true,
+            "description": "uuid of the api token",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "saison",
+            "required": false,
+            "description": "filter for season",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "show_all",
+            "required": false,
+            "description": "should all squads be shown?",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kader"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kader"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/squads/squad-athletes/{uuid}": {
+      "get": {
+        "tags": [
+          "Squad Athletes"
+        ],
+        "summary": "returns all squad members",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "uuid of the squad",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Auth-Token",
+            "in": "query",
+            "required": true,
+            "description": "uuid of the api token",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SquadAthletes"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/SquadAthletes"
+                }
               }
             }
           }
@@ -46,8 +158,411 @@
       }
     }
   },
+  "servers": [
+    {
+      "url": "https://{env}api.it4sport.de/{client}/",
+      "variables": {
+        "env": {
+          "description": "This is the environment you will call the API",
+          "default": "test",
+          "enum": [
+            "test",
+            "testing",
+            "dev"
+          ]
+        },
+        "client": {
+          "description": "This is the client you will call the API",
+          "default": "webinar"
+        }
+      }
+    }
+  ],
   "components": {
     "schemas": {
+      "Kader": {
+        "type": "object",
+        "required": [
+          "records",
+          "total",
+          "count"
+        ],
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "KaderBereichsBez",
+                "Saison",
+                "KaderName",
+                "KaderJahrgang",
+                "KaderVon",
+                "KaderBis",
+                "AlterVon",
+                "AlterBis",
+                "JahrgangVon",
+                "JahrgangBis",
+                "IstBundeskader",
+                "DisziplinNr",
+                "uID",
+                "KaderNr",
+                "KaderBereichsNr",
+                "KaderBereichUID"
+              ],
+              "properties": {
+                "KaderBereichsBez": {
+                  "type": "string",
+                  "example": "Talentkader",
+                  "description": "name of the scpoe of the squad"
+                },
+                "Saison": {
+                  "type": "integer",
+                  "minimum": 2000,
+                  "maximum": 2050,
+                  "description": "year of the season"
+                },
+                "KaderName": {
+                  "type": "string",
+                  "example": "Talentkader 2023",
+                  "description": "name of the squad"
+                },
+                "KaderJahrgang": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1950,
+                      "maximum": 2050
+                    },
+                    {
+                      "type": "string",
+                      "example": "1989/2000"
+                    }
+                  ],
+                  "description": "year of birth of the squad members"
+                },
+                "Geschlecht": {
+                  "type": "string",
+                  "example": "Mixed",
+                  "description": "specification of the gender of squad members"
+                },
+                "KaderVon": {
+                  "type": "string",
+                  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}$",
+                  "example": "2022-11-01 00:00:00.000",
+                  "description": "start of existence of the squad"
+                },
+                "KaderBis": {
+                  "type": "string",
+                  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}$",
+                  "example": "2023-12-31 00:00:00.000",
+                  "description": "end of existence of the squad"
+                },
+                "AlterVon": {
+                  "type": "integer",
+                  "example": 30,
+                  "description": "highest age of squad members"
+                },
+                "AlterBis": {
+                  "type": "integer",
+                  "example": 14,
+                  "description": "lowest age of squad members"
+                },
+                "JahrgangVon": {
+                  "type": "integer",
+                  "example": 1989,
+                  "description": "oldest birth year in squad"
+                },
+                "JahrgangBis": {
+                  "type": "integer",
+                  "example": 2000,
+                  "description": "youngest birth year in squad"
+                },
+                "IstBundeskader": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ],
+                  "description": "1, if squad is bundeskader"
+                },
+                "DisziplinNr": {
+                  "type": "integer",
+                  "example": 0,
+                  "description": "number of the discipline of the squad"
+                },
+                "uID": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "uuid of the squad"
+                },
+                "KaderNr": {
+                  "type": "integer",
+                  "example": 305,
+                  "description": "number of the squad"
+                },
+                "KaderBereichsNr": {
+                  "type": "integer",
+                  "example": 9,
+                  "description": "number of the scope of the squad"
+                },
+                "KaderBereichUID": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "uuid of the scope of the squad"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 1,
+            "description": "amount of records found"
+          },
+          "start": {
+            "type": "integer",
+            "example": 1,
+            "description": "starting number of record listing"
+          },
+          "limit": {
+            "type": "integer",
+            "example": 1,
+            "description": "limit amount of records per page"
+          },
+          "count": {
+            "type": "integer",
+            "example": 1,
+            "description": "number of records shown"
+          }
+        }
+      },
+      "SquadAthletes": {
+        "type": "object",
+        "required": [
+          "records",
+          "total",
+          "count"
+        ],
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "Nachname",
+                "Vorname",
+                "Jahrgang",
+                "Linkshaender",
+                "KaderBereichsNr",
+                "DisziplinNr",
+                "KaderBereichsBez",
+                "Saison",
+                "IstBundeskader",
+                "uID"
+              ],
+              "properties": {
+                "uID": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "uuid of the person"
+                },
+                "Nachname": {
+                  "type": "string",
+                  "example": "Mustermann",
+                  "description": "last name of the person"
+                },
+                "Vorname": {
+                  "type": "string",
+                  "example": "Max",
+                  "description": "first name of the person"
+                },
+                "Jahrgang": {
+                  "type": "string",
+                  "example": "2000",
+                  "description": "year of birth of person"
+                },
+                "Linkshaender": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    0
+                  ],
+                  "description": "is the person left-handed?"
+                },
+                "Funktion": {
+                  "type": "string"
+                },
+                "VereinsNr": {
+                  "type": "integer",
+                  "example": 108044,
+                  "description": "number of the club in phoenix"
+                },
+                "Verein": {
+                  "type": "string",
+                  "example": "SV Fellbach",
+                  "description": "name of the club"
+                },
+                "Stuetzpunkt": {
+                  "type": "string"
+                },
+                "KaderBereichsNr": {
+                  "type": "integer",
+                  "example": 83,
+                  "description": "number of the scope of the squad"
+                },
+                "DisziplinNr": {
+                  "type": "integer",
+                  "example": 0,
+                  "description": "number of the disciplines of the club"
+                },
+                "KaderBereichsBez": {
+                  "type": "string",
+                  "example": "Stuttgart wJ 2005",
+                  "description": "name of the squad of the person"
+                },
+                "Kadergruppe": {
+                  "type": "string"
+                },
+                "Saison": {
+                  "type": "integer",
+                  "minimum": 2000,
+                  "maximum": 2050
+                },
+                "IstBundeskader": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    0
+                  ],
+                  "description": "1, if person is in the bundeskader"
+                },
+                "Geschlecht": {
+                  "type": "string",
+                  "enum": [
+                    "w",
+                    "m",
+                    ""
+                  ],
+                  "description": "gender of person"
+                },
+                "DisziplinCode": {
+                  "type": "string",
+                  "example": "2000",
+                  "description": "discipline code"
+                },
+                "DisziplinBez": {
+                  "type": "string",
+                  "example": "Lauf/Gehen"
+                },
+                "Homepage": {
+                  "type": "string",
+                  "format": "url",
+                  "example": "max-mustermann.de"
+                },
+                "Facebook": {
+                  "type": "string",
+                  "format": "url",
+                  "example": "facebook.com/max-mustermann"
+                },
+                "Twitter": {
+                  "type": "string",
+                  "format": "url",
+                  "example": "twitter.com/max-mustermann"
+                },
+                "Palmares": {
+                  "type": "string",
+                  "example": "Olympia Gold in Weitsprung",
+                  "description": "archievements of athlete"
+                },
+                "FirstTrainer": {
+                  "type": "string",
+                  "example": "Max Mustermann",
+                  "description": "first trainer of athlete"
+                },
+                "ActiveTrainer": {
+                  "type": "string",
+                  "example": "Max Mustermann",
+                  "description": "active trainer of athlete"
+                },
+                "ActionFile": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "Url": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "https://api.it4sport.de/testdlv/api/files/public/portrait/B68H5B3E-65F9-K45F-80DA-8C62G7BC689F/Max-Mustermann_Action.jpg"
+                    },
+                    "Name": {
+                      "type": "string",
+                      "example": "Max-Mustermann-Action.jpg"
+                    },
+                    "Photographer": {
+                      "type": "string",
+                      "example": "Foto: Max Mustermann"
+                    },
+                    "Type": {
+                      "type": "string",
+                      "example": "image/jpeg"
+                    },
+                    "Size": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                },
+                "PortraitFile": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "Url": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "https://api.it4sport.de/testdlv/api/files/public/portrait/B68H5B3E-65F9-K45F-80DA-8C62G7BC689F/Max-Mustermann_Portrait.jpg"
+                    },
+                    "Name": {
+                      "type": "string",
+                      "example": "Max-Mustermann-Portrait.jpg"
+                    },
+                    "Photographer": {
+                      "type": "string",
+                      "example": "Foto: Max Mustermann"
+                    },
+                    "Type": {
+                      "type": "string",
+                      "example": "image/jpeg"
+                    },
+                    "Size": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 1,
+            "description": "total number of records"
+          },
+          "start": {
+            "type": "integer",
+            "example": 1,
+            "description": "starting number of records"
+          },
+          "limit": {
+            "type": "integer",
+            "example": 1,
+            "description": "limited amount of records per page"
+          },
+          "count": {
+            "type": "integer",
+            "example": 1,
+            "description": "amount of records listed"
+          }
+        }
+      },
       "Squads": {
         "type": "object",
         "properties": {
