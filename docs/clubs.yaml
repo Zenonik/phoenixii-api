@@ -153,6 +153,49 @@ paths:
                 $ref: "#/components/schemas/SportsFacilitiesApiResponse"
       security:
         - api_key: []
+
+  /clubs-offers:
+    get:
+      summary: List of all clubs with their offers
+      description: Returns a list of all clubs with detailed information and their offers.
+      parameters:
+        - name: club_id
+          in: query
+          description: Filters results by club ID
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        - name: page
+          in: query
+          description: Specifies the current page of results
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: "Specifies the maximum number of results returned per page (default: 500)"
+          required: false
+          schema:
+            type: integer
+            default: 500
+            example: 100
+      responses:
+        '200':
+          description: Successful response with the list of clubs and their offers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClubOffer'
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
 servers:
   - url: 'https://{env}api.it4sport.de/{client}/api/'
     variables:
@@ -781,6 +824,187 @@ components:
           type: integer
         dev:
           type: object
+    ClubOffer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        number:
+          type: string
+          example: "123456"
+        name:
+          type: string
+          example: "Demo Club"
+        name_short:
+          type: string
+          example: "Club"
+        street:
+          type: string
+          example: "Demo Street"
+        zip:
+          type: string
+          example: "12345"
+        city:
+          type: string
+          example: "Demo City"
+        country:
+          type: string
+          example: "Demo Country"
+        phone:
+          type: string
+          example: "123456789"
+        email:
+          type: string
+          format: email
+          example: "example@mail.com"
+        website:
+          type: string
+          format: uri
+          example: "https://example.com"
+        logo:
+          type: string
+          format: uri
+          example: "https://example.com/logo.png"
+        slogen:
+          type: string
+          example: "Demo Slogen"
+        geo:
+          type: object
+          properties:
+            lat:
+              type: number
+              format: float
+              example: 12.345678
+            lng:
+              type: number
+              format: float
+              example: 12.345678
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Offer'
+    Offer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        discipline:
+          type: string
+          example: "Handball"
+        description:
+          type: string
+          example: "Demo Description"
+        category:
+          $ref: '#/components/schemas/Category'
+        age_group:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgeGroup'
+        target_group:
+          $ref: '#/components/schemas/TargetGroup'
+        age_from:
+          type: integer
+          example: 10
+        age_to:
+          type: integer
+          example: 20
+        facility:
+          $ref: '#/components/schemas/Facility'
+        times:
+          type: array
+          items:
+            $ref: '#/components/schemas/Time'
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        name:
+          type: string
+          example: "Mannschaft"
+    AgeGroup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        name:
+          type: string
+          example: "Jugend"
+    TargetGroup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        name:
+          type: string
+          example: "Männlich"
+    Facility:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
+        name:
+          type: string
+          example: "Demo Facility"
+        street:
+          type: string
+          example: "Demo Street"
+        zip:
+          type: string
+          example: "12345"
+        city:
+          type: string
+          example: "Demo City"
+        country:
+          type: string
+          example: "Demo Country"
+        phone:
+          type: string
+          example: "123456789"
+        email:
+          type: string
+          format: email
+          example: "example@mail.com"
+        geo:
+          type: object
+          properties:
+            lat:
+              type: number
+              format: float
+              example: 12.345678
+            lng:
+              type: number
+              format: float
+              example: 12.345678
+    Time:
+      type: object
+      properties:
+        day:
+          type: integer
+          example: 1
+        weekday:
+          type: string
+          example: "Montag"
+        from:
+          type: string
+          format: time
+          example: "08:00"
+        to:
+          type: string
+          format: time
+          example: "10:00"
     ApiResponse:
       type: object
       properties:
@@ -859,4 +1083,25 @@ components:
           type: integer
           format: int32
           maximum: 999999
-          description: The number of disabled female members      
+          description: The number of disabled female members
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        from:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 10
+        per_page:
+          type: integer
+          example: 15
+        to:
+          type: integer
+          example: 15
+        total:
+          type: integer
+          example: 150
