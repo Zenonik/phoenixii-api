@@ -242,7 +242,7 @@ paths:
           schema:
             type: object
             properties:
-              lon:
+              lng:
                 type: number
                 format: float
               lat:
