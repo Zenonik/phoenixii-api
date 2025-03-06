@@ -235,6 +235,32 @@
         ]
       }
     },
+    "/clubs-offers/meta": {
+      "get": {
+        "summary": "Get metadata for clubs offers",
+        "description": "Returns metadata for clubs offers including categories, age groups, target groups, disciplines, and counties.",
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubOffersMetaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
     "/clubs-offers": {
       "get": {
         "summary": "List of all clubs with their offers",
@@ -270,6 +296,114 @@
               "type": "integer",
               "default": 500,
               "example": 100
+            }
+          },
+          {
+            "name": "keywords",
+            "in": "query",
+            "description": "Filters results by keywords",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "discipline_id",
+            "in": "query",
+            "description": "Filters results by discipline ID",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "weekdays",
+            "in": "query",
+            "description": "Filters results by one or more weekdays",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "target_groups",
+            "in": "query",
+            "description": "Filters results by target groups",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "description": "Filters results by categories",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "locations",
+            "in": "query",
+            "description": "Filters results by locations",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "accessibilities",
+            "in": "query",
+            "description": "Filters results by accessibilities",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "coordinates",
+            "in": "query",
+            "description": "Filters results by geographical coordinates (longitude, latitude)",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lng": {
+                  "type": "number",
+                  "format": "float"
+                },
+                "lat": {
+                  "type": "number",
+                  "format": "float"
+                }
+              }
+            }
+          },
+          {
+            "name": "max_distance",
+            "in": "query",
+            "description": "Filters results by maximum distance from the coordinates",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "float"
             }
           }
         ],
@@ -1109,6 +1243,16 @@
             "type": "string",
             "example": "Club"
           },
+          "county_number": {
+            "type": "string",
+            "nullable": true,
+            "example": "1"
+          },
+          "district_number": {
+            "type": "string",
+            "nullable": true,
+            "example": "0"
+          },
           "street": {
             "type": "string",
             "example": "Demo Street"
@@ -1180,8 +1324,7 @@
             "example": "7f5d4ad5-f79a-4efb-a7dc-aab7d750ac5e"
           },
           "discipline": {
-            "type": "string",
-            "example": "Handball"
+            "$ref": "#/components/schemas/Discipline"
           },
           "description": {
             "type": "string",
@@ -1296,6 +1439,14 @@
             "type": "string",
             "format": "email",
             "example": "example@mail.com"
+          },
+          "accessibility": {
+            "enum": [
+              "barrier-free",
+              "not barrier-free"
+            ],
+            "nullable": true,
+            "example": "barrier-free"
           },
           "geo": {
             "type": "object",
@@ -1468,6 +1619,41 @@
           "total": {
             "type": "integer",
             "example": 150
+          }
+        }
+      },
+      "ClubOffersMetaResponse": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "age_groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgeGroup"
+            }
+          },
+          "target_groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetGroup"
+            }
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "counties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/County"
+            }
           }
         }
       }
